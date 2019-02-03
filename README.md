@@ -1,1 +1,1 @@
-dotfiles for Ryan Finley
+dotfiles: zsh, bash, vim
