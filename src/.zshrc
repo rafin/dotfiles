@@ -41,4 +41,5 @@ alias ezmake="g++ -std=c++17"
 
 # SYSTEM SPECIFIC ALIASES -------------------------------------------
 # put all private configurations here
+touch ~/.zshrc_custom
 source ~/.zshrc_custom
