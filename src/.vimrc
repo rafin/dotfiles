@@ -1,4 +1,4 @@
-" VUNDLE -----------------------------------------------
+
 
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -12,8 +12,14 @@ Plugin 'w0rp/ale'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+" CtrlP -------
 
-" ALE --------
+let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<c-t>'],
+    \ 'AcceptSelection("t")': ['<cr>', '<2-LeftMouse>'],
+    \ }
+
+" ALE ---------
 let g:ale_lint_on_enter = 1
 let g:ale_linters = {'cpp': ['g++']}
 let g:ale_completion_enabled = 1
@@ -52,3 +58,18 @@ set shiftwidth=4
 set expandtab
 
 set number
+
+" Show tabs in red
+function! HiTabs()
+    syntax match TAB /\t/
+    hi TAB ctermbg=red guibg=red
+endfunction
+au BufEnter,BufRead * call HiTabs()
+
+" Show trailing whitespace in red
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
