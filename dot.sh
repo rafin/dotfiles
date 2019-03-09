@@ -14,10 +14,14 @@ function move_dots_temp {
     done
 }
 
+mkdir -p "cache/"
+
 if [ "$1" = "install" ]; then
     echo "moving dot files from src into the system" 
     move_dots "$HOME/" "cache/"
     move_dots "src/" "$HOME/"
+
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 elif [ "$1" = "loadfromsys" ]; then
     echo "moving dot files from system into src"
