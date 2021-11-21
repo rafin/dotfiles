@@ -1,5 +1,3 @@
-
-
 set nocompatible              " be iMproved, required
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -7,17 +5,17 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' " let Vundle manage Vundle, required
 
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'w0rp/ale'
+Plugin 'w0rp/ale'             " linter
+Plugin 'mileszs/ack.vim'
+Plugin 'tpope/vim-fugitive'   " git plugin
+Plugin 'tmhedberg/SimpylFold' " enables code collapsing
+
 
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-" CtrlP -------
-
-let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<c-t>'],
-    \ 'AcceptSelection("t")': ['<cr>', '<2-LeftMouse>'],
-    \ }
+" SimpylFold -------
+set foldlevel=99
 
 " ALE ---------
 let g:ale_lint_on_enter = 1
@@ -45,26 +43,27 @@ set statusline+=%=                           " right align
 set statusline+=%b,0x%-8B\                   " current char
 set statusline+=%-14.(%l,%c%V%)\ %<%P        " offset
 
-hi Search guibg=Yellow guifg=Black ctermbg=Yellow ctermfg=Black
 
 filetype plugin indent on
 syntax enable
 
+hi Search guibg=Yellow guifg=Black ctermbg=Yellow ctermfg=Black
+
 set hlsearch
 set incsearch
 
-set softtabstop=4
-set shiftwidth=4
+set softtabstop=2
+set shiftwidth=2
 set expandtab
 
 set number
 
 " Show tabs in red
-function! HiTabs()
-    syntax match TAB /\t/
-    hi TAB ctermbg=red guibg=red
-endfunction
-au BufEnter,BufRead * call HiTabs()
+"function! HiTabs()
+"    syntax match TAB /\t/
+"    hi TAB ctermbg=red guibg=red
+"endfunction
+"au BufEnter,BufRead * call HiTabs()
 
 " Show trailing whitespace in red
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -73,3 +72,6 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
+
+" Ctags
+set tags+=./tags;$HOME

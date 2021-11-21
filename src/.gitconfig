@@ -1,0 +1,22 @@
+[user]
+      name = Ryan Finley
+      email = ryanafinley@gmail.com
+[color]
+      ui = auto
+[push]
+      default = current
+[diff]
+      tool =
+[alias]
+      graph = log --graph --all --abbrev-commit              --pretty=format:'%Cred%h%Creset - %Cgreen(%cr)%Creset %s%C(yellow)%d%Creset' --date=relative
+      lol   = log --graph       --abbrev-commit --date=short --format=format:'%C(green)%h%C(reset) %C(cyan)%ad%C(reset) %C(white)%s%C(reset) %C(bold white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+      lola  = log --graph --all --abbrev-commit --date=short --format=format:'%C(green)%h%C(reset) %C(cyan)%ad%C(reset) %C(white)%s%C(reset) %C(bold white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+      yeet = push
+      yoink = pull
+      kobe = cherry-pick
+      vibecheck = status
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

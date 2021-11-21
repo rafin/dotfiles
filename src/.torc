@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# Use 'to' to bookmark a directory.
+# e.g.:  /jump/ARCHIVE/TIER1/jet/split $ to -a split # Set the 'split' bookmark to current directory
+#        /jump/ARCHIVE/TIER1/jet/split $ cd
+#        ~ $ to split                                # Go to the bookmarked location
+#        /jump/ARCHIVE/TIER1/jet/split $
+#        /jump/ARCHIVE/TIER1/jet/split $ cd /tmp
+#        /tmp $ to -u split                          # Update the 'split' bookmark to be /tmp
+#        /tmp $ to -d split                          # Delete the 'split' boomark
+
+_to_mapfile="${HOME}/.maps/to.shortcuts"
+_to_searchfile="${HOME}/.maps/to.searchdirs"
+function to {
+    [ ! -d "${HOME}/.maps" ] && mkdir "${HOME}/.maps"
+    touch ${_to_mapfile}
+    touch ${_to_searchfile}
+    if [ -z "$1" ]; then
+        echo "Please choose from the following 'to' destinations:"
+        echo ""
+        cat $_to_mapfile | tr ':' ' ' | while read s d; do
+            printf "%-15s %s\n" $s "$d"
+        done
+        return
+    fi
+
+    RESOLVE_ONLY="0"
+    if [[ ! -z "$( echo -- $1 | sed -e 's/^-- //' | grep -e '^-' )" ]]; then
+        case "$1" in
+            -h)
+                echo "Usage:"
+                echo " to {shortcut}         # Go to a previously saved directory"
+                echo " to -a {shortcut}      # Add the current directory to the map with {shortcut}"
+                echo " to -d {shortcut}      # Delete an entry from the map with the name {shortcut}"
+                echo " to -u {shortcut}      # Update an existing shortcut to the current path"
+                echo " to -e                 # Edit the map directly with vim"
+                echo " to -p {name}          # Do not consult the map at all, fall through to other handlers"
+                ;;
+            -u)
+                # Delete the existing shortcut
+                local str
+                str="^${2}:"
+                cat ${_to_mapfile} | grep -v ${str} > /tmp/_to_mapfile.tmp
+                mv /tmp/_to_mapfile.tmp ${_to_mapfile}
+
+                # Add it again
+                echo "${2}:`pwd`" >> ${_to_mapfile}
+                ;;
+            -e)
+                vim ${_to_mapfile}
+                ;;
+            -a)
+                if [ -z "$2" ]; then
+                    echo "Usage: to -a <shortcut>"
+                    return
+                fi
+                echo "${2}:`pwd`" >> ${_to_mapfile}
+                ;;
+            -d)
+                local str
+                str="^${2}:"
+                cat ${_to_mapfile} | grep -v ${str} > /tmp/_to_mapfile.tmp
+                mv /tmp/_to_mapfile.tmp ${_to_mapfile}
+                ;;
+            -r)
+                RESOLVE_ONLY="1"
+                shift
+                ;;
+            *) # It's nothing
+                echo "Unknown flag: $1"
+                ;;
+        esac
+        [[ "$RESOLVE_ONLY" == "0" ]] && return
+    fi
+
+    # Check to see if this is a map file entry
+    if [ ! "$1" = "-p" ]; then
+        local key
+        local _to_mapfile_ent
+        key=$1
+        _to_mapfile_ent="$(grep -he "^${key}:" ${_to_mapfile} | awk -F: '{ print $2 }')"
+        if [ ! -z "${_to_mapfile_ent}" ]; then
+            shift
+            if [[ "$RESOLVE_ONLY" == "1" ]]; then
+                echo "${_to_mapfile_ent}"
+            else
+                cd "${_to_mapfile_ent}"
+            fi
+            return
+        fi
+    else
+        shift
+    fi
+
+    # Check the searchdirs
+    if [ -e "${_to_searchfile}" ]; then
+        for dir in $( cat "${_to_searchfile}" ); do
+            if [ -d "${dir}" ]; then
+                if [[ "$RESOLVE_ONLY" == "1" ]]; then
+                    echo "${dir}
+                else
+                    cd "${dir}
+                fi
+                return
+            fi
+        done
+    fi
+
+    echo "Unkown path: $1"
+    return 1;
+}
+
+function _to_destinations {
+    local cur prev opts shortcuts #searchdir subdirs common_base base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [[ -z ${cur} ]]; then
+        COMPREPLY=( $( awk -F: '{ print $1 }' $_to_mapfile ) )
+    else
+        shortcuts="$( awk -F: '{ print $1 }' $_to_mapfile | grep "^${cur}")"
+
+        COMPREPLY=( $shortcuts )
+    fi
+    return 0
+}

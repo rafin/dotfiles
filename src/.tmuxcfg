@@ -1,0 +1,76 @@
+# switch panes using Alt-arrow without prefix
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+# resize panes with Alt+ijkl without prefix
+bind -n M-k resize-pane -D 5
+bind -n M-i resize-pane -U 5
+bind -n M-j resize-pane -L 5
+bind -n M-l resize-pane -R 5
+
+# switch windows using Alt-p/n without prefix
+bind -n S-Left previous-window
+bind -n S-Right next-window
+
+# prevent escape arrow pane switch
+set -s escape-time 0
+
+# Toggle mouse on: prefix -> Shift+`m`
+bind-key M \
+  set-window-option -g mode-mouse on \;\
+  set-option -g mouse-resize-pane on \;\
+  set-option -g mouse-select-pane on \;\
+  set-option -g mouse-select-window on \;\
+  display-message 'Mouse: ON'
+
+# Toggle mouse off: prefix -> `m`
+bind-key m \
+  set-window-option -g mode-mouse off \;\
+  set-option -g mouse-resize-pane off \;\
+  set-option -g mouse-select-pane off \;\
+  set-option -g mouse-select-window off \;\
+  display-message 'Mouse: OFF'
+
+set-window-option -g automatic-rename off
+set-option -g allow-rename off
+
+# border settings
+set -g pane-border-fg default
+set -g pane-active-border-fg green
+set -g pane-active-border-bg default
+
+# statusbar settings
+
+# toggle statusbar
+# bind-key s set status
+
+# use vi-style key bindings in the status line
+set -g status-keys vi
+
+# amount of time for which status line messages and other indicators
+# are displayed. time is in milliseconds.
+set -g display-time 2000
+
+# default statusbar colors
+set -g status-fg white
+set -g status-bg default
+set -g status-attr default
+
+# default window title colors
+setw -g window-status-fg white
+setw -g window-status-bg default
+setw -g window-status-attr bold
+
+# active window title colors
+setw -g window-status-current-fg black
+setw -g window-status-current-bg blue
+setw -g window-status-current-attr dim
+
+# command/message line colors
+set -g message-fg white
+set -g message-bg black
+set -g message-attr bright
+
+set -g status-right "#H"
